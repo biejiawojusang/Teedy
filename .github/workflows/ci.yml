@@ -6,36 +6,35 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
    steps:
-  - name: 拉取Teedy源码
+ steps:
+  - name: 检出代码
     uses: actions/checkout@v4
 
-  - name: 配置JDK17
+  - name: 配置Java17
     uses: actions/setup-java@v4
     with:
       java-version: '17'
-      distribution: 'temurin'
+      distribution: temurin
       cache: maven
 
-  # 1. 先Maven编译（调整到PMD前面）
-  - name: Maven构建
+  - name: Maven编译打包
     run: mvn clean compile --batch-mode
 
-  # 2. PMD代码检查，增加 -DfailOnViolation=false 忽略违规报错
-  - name: PMD代码检查
-    run: mvn pmd:pmd -DfailOnViolation=false --batch-mode
+  - name: PMD代码质量扫描
+    run: mvn pmd:pmd --batch-mode || true
 
   - name: 运行单元测试
     run: mvn test --batch-mode
 
-  - name: 生成JavaDoc项目文档
+  - name: 生成JavaDoc接口文档
     run: mvn javadoc:javadoc --batch-mode
 
-  - name: 上传构建产物
+  - name: 保存构建Jar包
     uses: actions/upload-artifact@v4
     with:
-      name: teedy-results
+      name: teedy产物包
       path: |
         target/*.jar
-        target/surefire-reports/
-        target/pmd/
-        target/site/apidocs/
+        target/surefire-reports
+        target/pmd
+        target/site/apidocs

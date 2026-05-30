@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven'
-        jdk 'JDK17'
+        jdk 'JDK25'
     }
     stages {
         stage('环境校验') {
